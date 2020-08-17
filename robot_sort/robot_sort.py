@@ -94,24 +94,39 @@ class SortingRobot:
         """
         return self._light == "ON"
 
-    def move_to_front(self):
-        while self.can_move_left():
-            self.move_left()
 
     def sort(self):
-        """
-        Sort the robot's list.
-        """
+        # light will be our flag, if on, still needs sorted
+        self.set_light_off()
         while not self.light_is_on():
-            while self.can_move_right():
-                self.swap_item()
-                while self.can_move_right():
-                    self.move_right()
-                    if self.compare_item() == -1 and self.can_move_right():
-                        self.swap_item()
-                    elif self.compare_item() == -1 and not self.can_move_right():
-                        self.move_to_front()
+            self.set_light_on()
 
+            # check next item:
+            # item held is smaller
+            while self.can_move_right():
+                # pick up item at current index.
+                if self.compare_item() == 1:  # Larger
+                    self.move_right()
+                elif self.compare_item() == -1:  # Smaller
+                    self.swap_item()
+                    self.move_right()
+                elif self.compare_item() == 0:  # Same
+                    self.move_right()
+                else:                           # None
+                    self.swap_item()
+                    self.move_right()
+
+            while self.can_move_left():
+                if self.compare_item() == 1:
+                    self.swap_item()
+                    self.move_left()
+                    self.set_light_off()
+                elif self.compare_item() == -1:
+                    self.move_left()
+                elif self.compare_item() == 0:
+                    self.move_left()
+                else:
+                    self.move_left()
 
 
 
